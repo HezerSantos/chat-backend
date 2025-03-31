@@ -1,0 +1,19 @@
+{
+  "name": "express-template",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "setup": "npm install @prisma/client @supabase/supabase-js bcryptjs cookie-parser cors date-fns dotenv ejs express-async-handler express-session express-validator express file-type helmet jsonwebtoken multer passport-jwt passport-local passport pg prisma && npx prisma init"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-async-handler": "^1.2.0"
+  }
+}
