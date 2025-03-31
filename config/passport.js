@@ -1,5 +1,5 @@
 const passport = require("passport");
-const bcrypt = require("bcryptjs");
+const argon = require('argon2');
 const prisma = require('./prisma')
 const { format } = require('date-fns');
 require('dotenv').config();
@@ -37,6 +37,13 @@ passport.use(
   )
 );
 
+const throwError = (message, status, json) => {
+  const error = new Error(message)
+  error.status = status
+  error.json = json
+  throw error
+}
+
 // Authenticate User (example)
 async function authenticateUser(username, password) {
   try {
@@ -45,14 +52,12 @@ async function authenticateUser(username, password) {
     });
 
     if (!user) {
-      console.log("Incorrect username or password");
-      throw new Error("Incorrect username or password");
+      throwError("Login Error", 401, ["Incorrect Username or Password"])
     }
 
-    const match = await bcrypt.compare(password, user.password);
+    const match = await argon.verify(user.password, password);
     if (!match) {
-      console.log("Incorrect username or password");
-      throw new Error("Incorrect username or password");
+      throwError("Login Error", 401, ["Incorrect Username or Password"])
     }
 
     // Create JWT payload

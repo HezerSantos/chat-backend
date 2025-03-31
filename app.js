@@ -20,13 +20,14 @@ app.use(staticMiddleware);
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 // Routers
-const loginRouter = require("./routes/loginRouter");
+const loginRouter = require("./routes/auth/loginRouter");
+const userRouter = require("./routes/users/userRouter");
 
 // Routes
-app.use("/login", loginRouter);
-
+app.use("/api/auth/login", loginRouter);
+app.use("/api/users", userRouter)
 // Logout Route
-app.post("/logout", (req, res) => {
+app.post("/api/auth/logout", (req, res) => {
   res.clearCookie("token", { 
     path: "/",
     httpOnly: true,
@@ -38,6 +39,16 @@ app.post("/logout", (req, res) => {
   console.log("Logged Out")
   res.json({ message: "Logged out successfully" });
 });
+
+
+app.use((err, req, res, next) => {
+  console.error(`Error ${err.status}: ${err.message}`)
+  res.status(err.status || 500).json({
+    errors: err.json,
+
+  });
+});
+
 
 // Server
 app.listen(8080, () => {
