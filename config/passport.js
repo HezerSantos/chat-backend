@@ -8,12 +8,12 @@ const jwt = require('jsonwebtoken');
 
 
 const JWT_SECRET = process.env.JWT_SECRET;
-
+const REFRESH_JWT_SECRET = process.env.REFRESH_JWT_SECRET;
 passport.use(
   new JwtStrategy(
     {
       jwtFromRequest: (req) => {
-        const token = req.cookies.token;
+        const token = req.cookies.access;
         // console.log("Extracted token from request:", token ? "Token exists" : "No token");
         return token || null;
       },
@@ -61,16 +61,20 @@ async function authenticateUser(username, password) {
     }
 
     // Create JWT payload
-    const payload = {
+    const accessPayload = {
       id: user.id,
     };
+    const refreshPayload = {
+      id: user.id,
+      expiresIn: `${7 * 24 * 60 * 60 * 1000}`
+    }
 
     // Sign the JWT token
-    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
-
+    const access = jwt.sign(accessPayload, JWT_SECRET, { expiresIn: '15m' });
+    const refresh = jwt.sign(refreshPayload, REFRESH_JWT_SECRET, {expiresIn: '7d'})
     console.log("User authenticated", format(new Date(), 'yyyy-MM-dd'));
 
-    return { user, token };
+    return { user, access, refresh };
   } catch (err) {
     throw err;
   }

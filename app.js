@@ -22,9 +22,11 @@ app.set("view engine", "ejs");
 // Routers
 const loginRouter = require("./routes/auth/loginRouter");
 const userRouter = require("./routes/users/userRouter");
+const refreshRouter = require("./routes/auth/refreshRouter");
 
 // Routes
 app.use("/api/auth/login", loginRouter);
+app.use("/api/auth/refresh", refreshRouter)
 app.use("/api/users", userRouter)
 // Logout Route
 app.post("/api/auth/logout", (req, res) => {

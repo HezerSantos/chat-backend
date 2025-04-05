@@ -9,7 +9,7 @@ exports.loginUser = [
         try {
             const { username, password} = req.body
             // console.log(username, password)
-            const { user, token } = await authenticateUser(username, password)
+            const { user, access, refresh } = await authenticateUser(username, password)
             console.log(req.body)
               // res.cookie('token', token, {
               //   httpOnly: true,
@@ -19,11 +19,18 @@ exports.loginUser = [
               //   maxAge: 24 * 60 * 60 * 1000
               // });
 
-            res.cookie("token", token, {
-                httpOnly: true,      // Prevents access to the cookie from JavaScript
-                secure: true, // Use HTTPS in production
-                maxAge: 60 * 60 * 1000, // 1 hour expiration time (can adjust as needed)
-                sameSite: "None", // To mitigate CSRF attacks
+            res.cookie("access", access, {
+                httpOnly: true, 
+                secure: true, 
+                maxAge: 15 * 60 * 1000, 
+                sameSite: "None",
+                path: "/",
+            });
+            res.cookie("refresh", refresh, {
+                httpOnly: true,      
+                secure: true,
+                maxAge: 7 * 24 * 60 * 60 * 1000, 
+                sameSite: "None", 
                 path: "/",
             });
 
