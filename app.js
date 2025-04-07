@@ -23,11 +23,13 @@ app.set("view engine", "ejs");
 const loginRouter = require("./routes/auth/loginRouter");
 const userRouter = require("./routes/users/userRouter");
 const refreshRouter = require("./routes/auth/refreshRouter");
+const groupRouter = require("./routes/groups/groupRouter");
 
 // Routes
 app.use("/api/auth/login", loginRouter);
 app.use("/api/auth/refresh", refreshRouter)
 app.use("/api/users", userRouter)
+app.use("/api/groups", groupRouter)
 // Logout Route
 app.post("/api/auth/logout", (req, res) => {
   res.clearCookie("token", { 
@@ -44,9 +46,9 @@ app.post("/api/auth/logout", (req, res) => {
 
 
 app.use((err, req, res, next) => {
-  console.error(`Error ${err.status}: ${err.message}`)
+  console.error(`Error ${err.status || 500 }: ${err.message || 'Internal Server Error'}`)
   res.status(err.status || 500).json({
-    errors: err.json,
+    errors: err.json || 'Internal Server Error',
 
   });
 });

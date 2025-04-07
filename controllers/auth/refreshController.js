@@ -35,7 +35,8 @@ exports.getRefresh = async(req, res, next) => {
 
         console.log("User Refreshed")
         return res.json({
-            message: 'Token Refreshed'
+            message: 'Token Refreshed',
+            id: refreshPayload.id
         })
 
     } catch(error) {
