@@ -10,7 +10,7 @@ exports.loginUser = [
             const { username, password} = req.body
             // console.log(username, password)
             const { user, access, refresh } = await authenticateUser(username, password)
-            console.log(req.body)
+
               // res.cookie('token', token, {
               //   httpOnly: true,
               //   secure: true,

@@ -20,7 +20,8 @@ exports.getRefresh = async(req, res, next) => {
         const refreshPayload = jwt.verify(refresh, REFRESH_JWT_SECRET)
         
         const accessPayload = {
-            id: refreshPayload.id
+            id: refreshPayload.id, 
+            username: refreshPayload.username
         }
 
         const access = jwt.sign(accessPayload, JWT_SECRET, { expiresIn: '15m' });
@@ -33,10 +34,11 @@ exports.getRefresh = async(req, res, next) => {
             path: "/",
         });
 
-        console.log("User Refreshed")
+        // console.log("User Refreshed")
         return res.json({
             message: 'Token Refreshed',
-            id: refreshPayload.id
+            id: refreshPayload.id,
+            username: refreshPayload.username
         })
 
     } catch(error) {

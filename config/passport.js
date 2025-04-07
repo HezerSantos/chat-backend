@@ -63,9 +63,11 @@ async function authenticateUser(username, password) {
     // Create JWT payload
     const accessPayload = {
       id: user.id,
+      username: user.username
     };
     const refreshPayload = {
       id: user.id,
+      username: user.username,
       expiresIn: `${7 * 24 * 60 * 60 * 1000}`
     }
 

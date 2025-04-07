@@ -1,7 +1,18 @@
 const express = require("express");
 const path = require("path");
 require("dotenv").config();
+
+//Start my confusion
+
+const http = require('http')
+const WebSocket = require('ws')
+
 const app = express();
+
+
+
+
+
 // Middleware Imports
 const corsMiddleware = require("./middleware/corsMiddleware");
 const helmetMiddleware = require("./middleware/helmetMiddleware");
@@ -24,6 +35,7 @@ const loginRouter = require("./routes/auth/loginRouter");
 const userRouter = require("./routes/users/userRouter");
 const refreshRouter = require("./routes/auth/refreshRouter");
 const groupRouter = require("./routes/groups/groupRouter");
+
 
 // Routes
 app.use("/api/auth/login", loginRouter);
@@ -54,7 +66,57 @@ app.use((err, req, res, next) => {
 });
 
 
+const server = http.createServer(app)
+
+const wss = new WebSocket.Server({ 
+  server, 
+  handleProtocols: (protocols, request) => {
+    return true
+  }
+})
+
+
+const connectedClients = new Map()
+
+wss.on('connection', (ws) => {
+  const socket = ws
+  let socketId
+  let username
+  let groupId
+
+  ws.on('message', (data) => {
+    const req = JSON.parse(data)
+
+    if (req.type === 'Connect'){
+      connectedClients.set(req.id, ws)
+      socketId = req.id
+      username = req.username
+      groupId = req.groupId
+      console.log(`${req.username} connected to group: ${req.groupId}`)
+      return
+    }
+    
+    connectedClients.forEach((client, id) => {
+      client.send(JSON.stringify({
+        userId: req.id,
+        username: req.username,
+        message: req.message,
+        groupId: req.groupId,
+        messageId: req.messageId
+      }))
+    })
+  })
+
+  ws.on('close', () => {
+    // connectedClients.delete(socketId)
+    if(username && groupId){
+      console.log(`${username} disconnected from group: ${groupId}`)
+    }
+  })
+})
+
+
 // Server
-app.listen(8080, () => {
+server.listen(8080, () => {
   console.log("App running on port 8080");
 });

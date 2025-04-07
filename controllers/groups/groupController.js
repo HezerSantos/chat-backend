@@ -99,7 +99,7 @@ exports.createMessage = [
             })
 
             return res.json({
-                message: "Message Received"
+                message: "Message Received",
             })
         } catch(error){
             return next(error)
@@ -115,6 +115,13 @@ exports.getGroupMessages = async(req, res, next) => {
         const messages = await prisma.message.findMany({
             where:{
                 groupId: parseInt(groupId)
+            },
+            include: {
+                user: {
+                    select: {
+                        username: true
+                    }
+                }
             }
         })
 
