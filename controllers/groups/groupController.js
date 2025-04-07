@@ -33,7 +33,8 @@ exports.createGroup = [
             await prisma.userGroup.create({
                 data: {
                     groupId: id,
-                    userId: req.user.id
+                    userId: req.user.id,
+                    name: groupName
                 }
             })
 
@@ -50,14 +51,27 @@ exports.createGroup = [
 exports.getGroup = async(req, res, next) => {
     try{
 
-        const rows = await prisma.group.findMany({
+        const userGroups = await prisma.group.findMany({
             where: {
                 creatorId: req.user.id
             }
         })
 
+        const joinedGroupIdsMap = userGroups.map(group => group.id)
+
+        const joinedGroupIdsSet = new Set(joinedGroupIdsMap)
+
+        const joinedGroups = await prisma.userGroup.findMany({
+            where: {
+                userId: req.user.id
+            }
+        })
+
+        const filteredJoinedGroups = joinedGroups.filter(group => !joinedGroupIdsSet.has(group.groupId)) 
+
         return res.json({
-            userGroups: rows
+            userGroups: userGroups,
+            joinedGroups: filteredJoinedGroups
         })
     } catch(error){
         return next(error)

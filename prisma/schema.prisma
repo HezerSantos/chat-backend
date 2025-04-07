@@ -57,6 +57,7 @@ model Group {
 model UserGroup {
   userId    Int
   groupId   Int
+  name String
   user      User  @relation("UserGroupsUser", fields: [userId], references: [id])
   group     Group @relation("UserGroupsGroup", fields: [groupId], references: [id])
 
