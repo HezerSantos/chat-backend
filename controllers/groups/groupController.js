@@ -50,7 +50,6 @@ exports.createGroup = [
 
 exports.getGroup = async(req, res, next) => {
     try{
-
         const userGroups = await prisma.group.findMany({
             where: {
                 creatorId: req.user.id
@@ -109,7 +108,10 @@ exports.createMessage = [
 
 exports.getGroupMessages = async(req, res, next) => {
     try{
-
+        /*
+            QUERY DB for group id. Check if req.userId in the userIds
+            If not return 401
+        */
         const { groupId } = req.params
 
         const messages = await prisma.message.findMany({

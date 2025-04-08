@@ -108,7 +108,7 @@ wss.on('connection', (ws) => {
   })
 
   ws.on('close', () => {
-    // connectedClients.delete(socketId)
+    connectedClients.delete(socketId)
     if(username && groupId){
       console.log(`${username} disconnected from group: ${groupId}`)
     }

@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "fix": "find .git/objects/ -type f -empty | xargs rm; git fetch -p; git fsck --full",
     "setup": "npm install @prisma/client @supabase/supabase-js bcryptjs cookie-parser cors date-fns dotenv ejs express-async-handler express-session express-validator express file-type helmet jsonwebtoken multer passport-jwt passport-local passport pg prisma && npx prisma init"
   },
   "keywords": [],
