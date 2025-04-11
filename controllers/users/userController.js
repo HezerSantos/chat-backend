@@ -3,6 +3,7 @@ const primsa = require("../../config/prisma")
 const { validateCreateUser } = require("../../validation/createUserValidator")
 const prisma = require("../../config/prisma")
 const argon = require('argon2');
+const { validateUpdate } = require("../../validation/validateUpdate");
 
 const throwError = (message, status, json) => {
     const error = new Error(message)
@@ -35,6 +36,22 @@ exports.createUser = [
             })
         } catch (e) {
             return next(e)
+        }
+    }
+]
+
+exports.updateUser = [
+    validateUpdate,
+    async(req, res, next) => {
+        try{
+            const errors = validationResult(req)
+            if (!errors.isEmpty()){
+                throwError("Credential Error", 400, errors.array())
+            }
+
+            return res.json("Updated Username")
+        }catch(error){
+            next(error)
         }
     }
 ]

@@ -44,13 +44,25 @@ app.use("/api/users", userRouter)
 app.use("/api/groups", groupRouter)
 // Logout Route
 app.post("/api/auth/logout", (req, res) => {
-  res.clearCookie("token", { 
+  // res.clearCookie("token", { 
+  //   path: "/",
+  //   httpOnly: true,
+  //   secure: true,
+  //   sameSite: "strict",
+  //   domain: '.up.railway.app',
+  // });
+  res.clearCookie("access", {
+    httpOnly: true, 
+    secure: true, 
+    sameSite: "None",
     path: "/",
-    httpOnly: true,
+});
+res.clearCookie("refresh", {
+    httpOnly: true,      
     secure: true,
-    sameSite: "strict",
-    domain: '.up.railway.app',
-  });
+    sameSite: "None", 
+    path: "/",
+});
 
   console.log("Logged Out")
   res.json({ message: "Logged out successfully" });
@@ -60,7 +72,7 @@ app.post("/api/auth/logout", (req, res) => {
 app.use((err, req, res, next) => {
   console.error(`Error ${err.status || 500 }: ${err.message || 'Internal Server Error'}`)
   res.status(err.status || 500).json({
-    errors: err.json || 'Internal Server Error',
+    errors: err.json || ['Internal Server Error'],
 
   });
 });

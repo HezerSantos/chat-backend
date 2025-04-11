@@ -1,5 +1,6 @@
 const { body } = require('express-validator')
 const prisma = require("../config/prisma")
+const argon = require('argon2');
 const throwError = (message, status) => {
     const error = new Error(message)
     error.status = status
@@ -47,5 +48,5 @@ exports.validateCreateUser = [
             }
             return true
         })
-        .escape()
+        .escape(),
 ]

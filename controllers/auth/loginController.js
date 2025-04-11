@@ -11,13 +11,22 @@ exports.loginUser = [
             // console.log(username, password)
             const { user, access, refresh } = await authenticateUser(username, password)
 
-              // res.cookie('token', token, {
-              //   httpOnly: true,
-              //   secure: true,
-              //   sameSite: 'strict',
-              //   domain: '.up.railway.app',
-              //   maxAge: 24 * 60 * 60 * 1000
-              // });
+            // res.cookie("access", access, {
+            //     httpOnly: true, 
+            //     secure: true, 
+            //     maxAge: 15 * 60 * 1000, 
+            //     sameSite: "strict",
+            //     path: "/",
+            //     domain: '.up.railway.app',
+            // });
+            // res.cookie("refresh", refresh, {
+            //     httpOnly: true,      
+            //     secure: true,
+            //     maxAge: 7 * 24 * 60 * 60 * 1000, 
+            //     sameSite: "strict", 
+            //     path: "/",
+            //     domain: '.up.railway.app',
+            // });
 
             res.cookie("access", access, {
                 httpOnly: true, 
