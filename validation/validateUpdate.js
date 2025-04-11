@@ -75,6 +75,10 @@ exports.validateUpdate = [
     body("username")
         .trim("")
         .custom(async(username) => {
+            if(username === ""){return true}
+            if(username.length < 1){
+                throwError("Username must be at least 1 character", 500)
+            }
             let user
             try {
                 user = await prisma.user.findUnique({
@@ -83,14 +87,14 @@ exports.validateUpdate = [
                     }
                 })
                 if (user){
-                    throw new Error
+                    throwError("Username Exists", 409)
                 }
                 return true
             } catch (e) {
                 if(user){
-                    throw new Error("Username Already Exists")
+                    throwError("Username Exists", 409)
                 } else {
-                    throw new Error("Internal Server Error. Please Try Again")
+                    throwError("Internal Server Error", 500)
                 }
                 
             }
@@ -98,14 +102,23 @@ exports.validateUpdate = [
         .escape(),
     body("password")
         .trim()
-        .isLength({min: 3}).withMessage("Password must be at least 12 characters")
+        .custom(password => {
+            if(password){return true}else{return true}
+        })
         .escape(),
     body("confirmPassword")
         .trim()
         .custom((value, { req }) => {
-            if (value !== req.body.password){
-                throw new Error("Passwords dont match")
+            if(req.body.password){
+                if (value !== req.body.password){
+                    throwError("Passwords Dont Match", 400)
+                }
+                if (value.length < 12){
+                    throwError("Password Must be 12 characters long")
+                }
+                return true
             }
+
             return true
         })
         .escape(),

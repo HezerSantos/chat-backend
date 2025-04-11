@@ -49,7 +49,51 @@ exports.updateUser = [
                 throwError("Credential Error", 400, errors.array())
             }
 
-            return res.json("Updated Username")
+            const { username, password, verify } = req.body
+
+            if(!verify){
+                throwError("Credential Error", 401, [{msg: "Unauthorized"}])
+            }
+
+            const userPassword = await prisma.user.findUnique({
+                where:{
+                    id: req.user.id
+                },
+                select:{
+                    password: true
+                }
+            })
+            
+            const match = await argon.verify(userPassword.password, verify)
+            
+            if(!match){
+                throwError("Credential Error", 401, [{msg: "Unauthorized"}])
+            }
+
+
+            const formData = {}
+            const changedData = {}
+            if(username){
+                formData.username = username
+                changedData.username = true
+            }
+            if(password){
+                const hashedPassword = await argon.hash(password)
+                formData.password = hashedPassword
+                changedData.password = true
+            }
+
+            await prisma.user.update({
+                where:{
+                    id: req.user.id
+                },
+                data: formData
+            })
+
+            return res.json({
+                message: "Credentials Changed",
+                changedData
+            })
         }catch(error){
             next(error)
         }
