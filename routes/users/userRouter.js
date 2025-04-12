@@ -1,4 +1,5 @@
 const { Router } = require('express')
+const { validate } = require('../../controllers/auth/validateFingerprint')
 const { 
     createUser, 
     getUsers, 
@@ -15,19 +16,19 @@ const passport = require('passport')
 
 const userRouter = Router()
 
-userRouter.get("/", passport.authenticate("jwt", {session: false}), getUsers)
+userRouter.get("/", passport.authenticate("jwt", {session: false}), validate, getUsers)
 userRouter.post("/", createUser)
-userRouter.put("/", passport.authenticate("jwt", {session: false}), updateUser)
+userRouter.put("/", passport.authenticate("jwt", {session: false}), validate, updateUser)
 
-userRouter.post("/:userId/friends/request", passport.authenticate("jwt", {session: false}), sendRequest)
+userRouter.post("/:userId/friends/request", passport.authenticate("jwt", {session: false}), validate, sendRequest)
 
-userRouter.delete("/:userId/friends/request/pending", passport.authenticate("jwt", {session: false}), deletePending)
-userRouter.delete("/:userId/friends/request/received", passport.authenticate("jwt", {session: false}), deleteReceived)
+userRouter.delete("/:userId/friends/request/pending", passport.authenticate("jwt", {session: false}), validate, deletePending)
+userRouter.delete("/:userId/friends/request/received", passport.authenticate("jwt", {session: false}), validate, deleteReceived)
 
-userRouter.get("/friends/request", passport.authenticate("jwt", {session: false}), getRequests)
+userRouter.get("/friends/request", passport.authenticate("jwt", {session: false}), validate, getRequests)
 
-userRouter.post("/:userId/friends", passport.authenticate("jwt", {session: false}), addFriend)
-userRouter.get("/friends", passport.authenticate("jwt", {session: false}), getFriends)
-userRouter.delete("/:userId/friends", passport.authenticate("jwt", { session: false}), deleteFriend)
+userRouter.post("/:userId/friends", passport.authenticate("jwt", {session: false}), validate, addFriend)
+userRouter.get("/friends", passport.authenticate("jwt", {session: false}), validate, getFriends)
+userRouter.delete("/:userId/friends", passport.authenticate("jwt", { session: false}), validate, deleteFriend)
 
 module.exports = userRouter

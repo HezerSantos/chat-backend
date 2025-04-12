@@ -18,11 +18,13 @@ exports.validate = async(req, res, next) => {
                 fingerprint: true
             }
         })
-        // console.log(req.headers['user-agent'])
+        // console.log(req.headers['user-agent'], req.ip)
         // console.log("DB:", fingerprint.fingerprint)
         // console.log("Req:", req.fingerprint)
 
         const match = await argon.verify(fingerprint.fingerprint, req.fingerprint)
+
+        // console.log(match)
         if(!match){
             throwError("Fingerprint Fail", 400, [{msg:'Invalid Fingerprint'}])
         }
