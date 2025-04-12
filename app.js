@@ -20,7 +20,9 @@ const { passport } = require("./config/passport");
 const staticMiddleware = require("./middleware/staticMiddleware");
 const cookieParserMiddleware = require("./middleware/cookieParserMiddleware");
 const bodyParserMiddleware = require("./middleware/bodyParserMiddleware");
+const {fingerprint} = require('./middleware/fingerPrintMiddleware')
 // Apply Middleware
+app.use(fingerprint)
 app.use(cookieParserMiddleware);
 app.use(bodyParserMiddleware);
 app.use(corsMiddleware);
@@ -30,6 +32,7 @@ app.use(staticMiddleware);
 // View Engine Setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
+app.set('trust proxy', true);
 // Routers
 const loginRouter = require("./routes/auth/loginRouter");
 const userRouter = require("./routes/users/userRouter");

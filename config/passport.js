@@ -7,6 +7,7 @@ const { Strategy: JwtStrategy, ExtractJwt } = require("passport-jwt");
 const jwt = require('jsonwebtoken');
 
 
+
 const JWT_SECRET = process.env.JWT_SECRET;
 const REFRESH_JWT_SECRET = process.env.REFRESH_JWT_SECRET;
 passport.use(
@@ -45,7 +46,7 @@ const throwError = (message, status, json) => {
 }
 
 // Authenticate User (example)
-async function authenticateUser(username, password) {
+async function authenticateUser(username, password, req) {
   try {
     const user = await prisma.user.findUnique({
       where: { username },
@@ -63,7 +64,7 @@ async function authenticateUser(username, password) {
     // Create JWT payload
     const accessPayload = {
       id: user.id,
-      username: user.username
+      username: user.username,
     };
     const refreshPayload = {
       id: user.id,

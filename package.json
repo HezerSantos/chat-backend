@@ -23,6 +23,7 @@
     "ejs": "^3.1.10",
     "express": "^4.21.2",
     "express-async-handler": "^1.2.0",
+    "express-fingerprint": "^1.0.5",
     "express-session": "^1.18.1",
     "express-validator": "^7.2.1",
     "file-type": "^20.4.1",
@@ -33,7 +34,9 @@
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "pg": "^8.14.1",
-    "prisma": "^6.5.0",
     "ws": "^8.18.1"
+  },
+  "devDependencies": {
+    "prisma": "^6.6.0"
   }
 }
