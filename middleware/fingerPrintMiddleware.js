@@ -4,8 +4,6 @@ const fingerprint = (req, res, next) => {
   let ip = req.ip
   
   userAgent = userAgent.split(" ")
-
-
   // console.log(userAgent)
   let newAgent = ''
   let osFlag = false
@@ -21,9 +19,11 @@ const fingerprint = (req, res, next) => {
     }
   }
 
-  // console.log(newAgent)
+  newAgent = newAgent.split("/")
 
-  const fp = `${newAgent}|${ip}`
+  let fingerprint = newAgent.slice(0,3)
+  fingerprint = fingerprint.join("|")
+  const fp = `${fingerprint}|${ip}`
   // console.log(fp)
   req.fingerprint = fp
   next()
@@ -31,5 +31,3 @@ const fingerprint = (req, res, next) => {
 
 
 module.exports = {fingerprint};
-
-//Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36|::1

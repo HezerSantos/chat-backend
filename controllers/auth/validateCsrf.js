@@ -7,8 +7,8 @@ exports.validateCsrf = (req, res, next) => {
     const _sxrfa = req.cookies._sxrfa
 
     const payload = jwt.verify(_sxrfa, XFRS_SECRET)
-    console.log("Original", payload._fqekx)
-    console.log("Modified", req.headers._sadwv)
+    // console.log("Original", payload._fqekx)
+    // console.log("Modified", req.headers._sadwv)
 
     next()
 }
