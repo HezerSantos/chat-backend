@@ -21,9 +21,11 @@ const staticMiddleware = require("./middleware/staticMiddleware");
 const cookieParserMiddleware = require("./middleware/cookieParserMiddleware");
 const bodyParserMiddleware = require("./middleware/bodyParserMiddleware");
 const {fingerprint} = require('./middleware/fingerPrintMiddleware')
+const { csrf } = require('./middleware/csrfMiddleware')
 // Apply Middleware
-app.use(fingerprint)
 app.use(cookieParserMiddleware);
+app.use(csrf)
+app.use(fingerprint)
 app.use(bodyParserMiddleware);
 app.use(corsMiddleware);
 app.use(helmetMiddleware); // Uncomment when needed

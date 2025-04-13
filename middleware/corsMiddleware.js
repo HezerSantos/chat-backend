@@ -20,7 +20,7 @@ const corsOptions = {
   
   },
   methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization", "Cookie", "Set-Cookie"],
+  allowedHeaders: ["Content-Type", "Authorization", "Cookie", "Set-Cookie", "_sadwv"],
   credentials: true, // Allow cookies to be sent
   optionsSuccessStatus: 200
 };

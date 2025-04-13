@@ -1,16 +1,30 @@
-const crypto = require('crypto')
-const prisma = require('../config/prisma')
 
 const fingerprint = (req, res, next) => {
   let userAgent = req.headers['user-agent']
   let ip = req.ip
+  
+  userAgent = userAgent.split(" ")
 
-  // console.log(userAgent, ip)
 
-  const fp = `${userAgent}|${ip}`
-  // console.log(data)
-  // const fp = crypto.createHash('sha256').update(data).digest('hex')
+  // console.log(userAgent)
+  let newAgent = ''
+  let osFlag = false
+  for(let i = 0; i < userAgent.length; i++){
+    if(/\(/.test(userAgent[i])){
+      osFlag = true
+    }
+    if(!osFlag){
+      newAgent += userAgent[i]
+    }
+    if(/\)/.test(userAgent[i])){
+      osFlag = false
+    }
+  }
 
+  // console.log(newAgent)
+
+  const fp = `${newAgent}|${ip}`
+  // console.log(fp)
   req.fingerprint = fp
   next()
 }
@@ -18,8 +32,4 @@ const fingerprint = (req, res, next) => {
 
 module.exports = {fingerprint};
 
-
-//access 
-// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhbGV4MSIsImlhdCI6MTc0NDQ4MTYxMiwiZXhwIjoxNzQ0NDgyNTEyfQ.Ze2ZLG7gDF8_Kn5rDz9RxVjTAT8nLMpBdIUTiOWp8mw
-//refresh
-// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhbGV4MSIsImV4cGlyZXNJbiI6IjYwNDgwMDAwMCIsImlhdCI6MTc0NDQ4MTUzMywiZXhwIjoxNzQ1MDg2MzMzfQ.Jv4Y682KrTDNoIx_x1_WLxg9Y0woH0ICKV-k4_NjkME
+//Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36|::1
