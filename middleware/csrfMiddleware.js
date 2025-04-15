@@ -9,16 +9,27 @@ const csrfs = ["cats", "max"]
 
 const csrf = async(req, res, next) => {
     //store the orignal
-
+    // console.log(req.cookies)
     const crossSurf = crypto.randomBytes(32).toString('hex');
 
-
+    // if(req.cookies._sxrfa){
+    //     console.log("I exist")
+    //     console.log(req.method, req.url)
+    //     console.log()
+    // } else {
+    //     if(req.method !== "OPTIONS"){
+    //         console.log("I dont exist")
+    //         console.log(req.method, req.url)
+    //         console.log()
+    //     }
+    // }
     const payload = {
         _fqekx: crossSurf
     }
     const _sxrfa = jwt.sign(payload, XFRS_SECRET, { expiresIn: '7d'})
-    // if(!req.cookies._sxrfa){
-    //     req._sxrfa = req._sxrfa
+    // if(!req.cookies._sxrfa && (req.method !== "OPTIONS")){
+    //     req._sxrfa = _sxrfa
+    //     // console.log("I ran")
     // } else {
     //     req._sxrfa = req.cookies._sxrfa
     // }
