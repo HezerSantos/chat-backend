@@ -22,9 +22,11 @@ const cookieParserMiddleware = require("./middleware/cookieParserMiddleware");
 const bodyParserMiddleware = require("./middleware/bodyParserMiddleware");
 const {fingerprint} = require('./middleware/fingerPrintMiddleware')
 const { csrf } = require('./middleware/csrfMiddleware')
+const { validateCsrf } = require('./middleware/validateCsrfMiddleware')
 // Apply Middleware
 app.use(cookieParserMiddleware);
-app.use(csrf)
+// app.use(csrf)
+// app.use(validateCsrf)
 app.use(fingerprint)
 app.use(bodyParserMiddleware);
 app.use(corsMiddleware);
@@ -43,19 +45,13 @@ const groupRouter = require("./routes/groups/groupRouter");
 
 
 // Routes
+app.use("/api/auth/csrf", csrf)
 app.use("/api/auth/login", loginRouter);
 app.use("/api/auth/refresh", refreshRouter)
 app.use("/api/users", userRouter)
-app.use("/api/groups", groupRouter)
+app.use("/api/groups", validateCsrf, groupRouter)
 // Logout Route
 app.post("/api/auth/logout", (req, res) => {
-  // res.clearCookie("token", { 
-  //   path: "/",
-  //   httpOnly: true,
-  //   secure: true,
-  //   sameSite: "strict",
-  //   domain: '.up.railway.app',
-  // });
   res.clearCookie("access", {
     httpOnly: true, 
     secure: true, 
