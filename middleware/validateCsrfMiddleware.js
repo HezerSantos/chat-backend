@@ -7,14 +7,15 @@ exports.validateCsrf = (req, res, next) => {
     const _sxrfa = req.cookies._sxrfa
 
     const payload = jwt.verify(_sxrfa, XFRS_SECRET)
-    // console.log("Original", payload._fqekx, req.originalUrl)
-    // console.log("Modified", req.headers._sadwv)
-    // console.log()
+    console.log("Original", payload._fqekx, req.originalUrl)
+    console.log("Modified", req.headers._sadwv)
+    console.log()
 
     const crossSurf = crypto.randomBytes(32).toString('hex');
-
+    const id = Math.floor(Math.random() * 21)
     const newPayload = {
-        _fqekx: crossSurf
+        _fqekx: crossSurf,
+        oqi_wd: id
     }
 
     const newToken = jwt.sign(newPayload, XFRS_SECRET, { expiresIn: '7d'})
