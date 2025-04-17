@@ -67,8 +67,7 @@ exports.getGroup = async(req, res, next) => {
         })
 
         const filteredJoinedGroups = joinedGroups.filter(group => !joinedGroupIdsSet.has(group.groupId)) 
-
-        return res.json({
+        return res.status(200).json({
             userGroups: userGroups,
             joinedGroups: filteredJoinedGroups
         })

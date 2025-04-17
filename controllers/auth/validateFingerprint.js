@@ -28,7 +28,6 @@ exports.validate = async(req, res, next) => {
         if(!match){
             throwError("Fingerprint Fail", 400, [{msg:'Invalid Fingerprint'}])
         }
-
         next()
     } catch(error){
         next(error)

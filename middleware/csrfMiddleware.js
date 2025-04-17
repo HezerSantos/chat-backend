@@ -6,20 +6,20 @@ const XFRS_SECRET = process.env.XFRS_SECRET
 
 const csrf = async(req, res, next) => {
     const crossSurf = crypto.randomBytes(32).toString('hex');
-    const id = Math.floor(Math.random() * 21)
+    const id = Math.floor(Math.random() * 20)
     const payload = {
         _fqekx: crossSurf,
         oqi_wd: id
     }
 
-    const _sxrfa = jwt.sign(payload, XFRS_SECRET, { expiresIn: '7d'})
+    const _sxrfa = jwt.sign(payload, XFRS_SECRET, { expiresIn: '15s'})
 
 
     
     res.cookie("_sxrfa", _sxrfa, {
         httpOnly: false, 
         secure: true, 
-        maxAge: 7 * 24 * 60 * 60 * 1000, 
+        maxAge: 15 * 1000, 
         sameSite: "None",
         path: "/",
     })
