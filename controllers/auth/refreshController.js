@@ -12,6 +12,7 @@ const throwError = (message, status, json) => {
 
 exports.getRefresh = async(req, res, next) => {
     try{
+        console.log("Refreshed")
         const refresh = req.cookies.refresh
         if(!refresh){
             throwError('Unauthorized', 401, ['Unauthorized'])

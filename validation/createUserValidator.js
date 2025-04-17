@@ -37,7 +37,7 @@ exports.validateCreateUser = [
     body("password")
         .trim()
         .notEmpty().withMessage("Password Cannot be Empty")
-        .isLength({min: 12}).withMessage("Password Must be at Least 12 characters")
+        .isLength({min: 3}).withMessage("Password Must be at Least 12 characters")
         .escape(),
     body("confirmPassword")
         .trim()

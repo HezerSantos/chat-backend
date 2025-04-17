@@ -23,14 +23,13 @@ const bodyParserMiddleware = require("./middleware/bodyParserMiddleware");
 const {fingerprint} = require('./middleware/fingerPrintMiddleware')
 const { csrf } = require('./middleware/csrfMiddleware')
 const { validateCsrf } = require('./middleware/validateCsrfMiddleware')
+const { validateRefreshCsrf } = require('./middleware/validateRefreshCsrf')
 // Apply Middleware
 app.use(cookieParserMiddleware);
-// app.use(csrf)
-// app.use(validateCsrf)
 app.use(fingerprint)
 app.use(bodyParserMiddleware);
 app.use(corsMiddleware);
-app.use(helmetMiddleware); // Uncomment when needed
+app.use(helmetMiddleware);
 app.use(passport.initialize());
 app.use(staticMiddleware);
 // View Engine Setup
@@ -46,9 +45,9 @@ const groupRouter = require("./routes/groups/groupRouter");
 
 // Routes
 app.use("/api/auth/csrf", csrf)
-app.use("/api/auth/login", loginRouter);
-app.use("/api/auth/refresh", refreshRouter)
-app.use("/api/users", userRouter)
+app.use("/api/auth/login", validateCsrf, loginRouter);
+app.use("/api/auth/refresh",validateRefreshCsrf, refreshRouter)
+app.use("/api/users", validateCsrf, userRouter)
 app.use("/api/groups", validateCsrf, groupRouter)
 // Logout Route
 app.post("/api/auth/logout", (req, res) => {

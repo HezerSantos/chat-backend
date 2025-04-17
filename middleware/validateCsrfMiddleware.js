@@ -40,10 +40,14 @@ const XFRS_SECRET = process.env.XFRS_SECRET
     value +
     _fqekx.slice(32, 65)
     // console.log(token)
-    // console.log(originalToken)
-    // console.log()
-    // console.log(header)
 
+    if(!(originalToken === header)){
+        // console.log("TOKEN", token)
+        // console.log()
+        console.log("DECODED", originalToken)
+        console.log()
+        console.log("HEADER", header)
+    }
     return originalToken === header
   }
 
@@ -60,12 +64,14 @@ exports.validateCsrf = (req, res, next) => {
         const _sxrfa = req.cookies._sxrfa
         
         if(!_sxrfa){
+            console.log("Rejected", req.method, req.originalUrl)
             throwError("CSRF missing", 403, ['CSRF Missing'])
         }
         
         const match = compare(_sxrfa, req.headers._sadwv)
         
         if(!match){
+            console.log("Rejected", req.method, req.originalUrl)
             throwError("CSRF token invalid or missing", 403, ['403 Forbidden'])
         }
     
@@ -76,18 +82,18 @@ exports.validateCsrf = (req, res, next) => {
             oqi_wd: id
         }
     
-        const newToken = jwt.sign(newPayload, XFRS_SECRET, { expiresIn: '15s'})
+        const newToken = jwt.sign(newPayload, XFRS_SECRET, { expiresIn: '5m'})
     
     
         
         res.cookie("_sxrfa", newToken, {
             httpOnly: false, 
             secure: true, 
-            maxAge: 15 * 1000, 
+            maxAge: 60 * 1000 * 5, 
             sameSite: "None",
             path: "/",
         })
-
+        console.log("Validated", req.method, req.originalUrl)
         next()
     } catch(error){
         next(error)
