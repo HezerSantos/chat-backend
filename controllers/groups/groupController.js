@@ -21,6 +21,15 @@ exports.createGroup = [
                 throwError("Invalid Group Name", 400, errors.array())
             }
 
+            const groupCount = await prisma.group.count({
+                where: {
+                    creatorId: req.user.id
+                }
+            })
+            if(groupCount === 3){
+                throwError("Too many Groups", 400, [{msg: "Maximum amount of Groups is 3"}])
+            }
+
             const { groupName } = req.body
 
             const { id } = await prisma.group.create({
