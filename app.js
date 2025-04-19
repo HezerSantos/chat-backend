@@ -14,6 +14,7 @@ const app = express();
 
 
 // Middleware Imports
+const jwt = require('jsonwebtoken');
 const corsMiddleware = require("./middleware/corsMiddleware");
 const helmetMiddleware = require("./middleware/helmetMiddleware");
 const { passport } = require("./config/passport");
@@ -90,7 +91,33 @@ const wss = new WebSocket.Server({
 
 const connectedClients = new Map()
 
-wss.on('connection', (ws) => {
+const getCookie = (tokenName, cookie) => {
+  let cookies = cookie.split(';')
+  cookies = cookies.map((cookie) => cookie.trim())
+  cookies = cookies.map((cookie) => cookie.split('='))
+  cookies = new Map(cookies)
+  return cookies.get(tokenName)
+}
+
+JWT_SECRET = process.env.JWT_SECRET
+XFRS_SECRET = process.env.XFRS_SECRET
+
+wss.on('connection', (ws, req) => {
+  const access = getCookie("access", req.headers.cookie)
+  let _sxrfa = getCookie("_sxrfa", req.headers.cookie)
+  try{
+    const accessPayload = jwt.verify(access, JWT_SECRET)
+    const _sxrfaPayload = jwt.verify(_sxrfa, XFRS_SECRET)
+    if(!accessPayload || !_sxrfaPayload){
+
+    }
+  } catch(error){
+    ws.close(4000, 'Invalid session cookie')
+    console.log("Invalid")
+  }
+
+
+
   const socket = ws
   let socketId
   let username
@@ -98,12 +125,12 @@ wss.on('connection', (ws) => {
 
   ws.on('message', (data) => {
     const req = JSON.parse(data)
-
     if (req.type === 'Connect'){
       connectedClients.set(req.id, ws)
       socketId = req.id
       username = req.username
       groupId = req.groupId
+      payload = req.token
       // console.log(`${req.username} connected to group: ${req.groupId}`)
       return
     }
