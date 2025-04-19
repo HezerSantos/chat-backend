@@ -43,7 +43,6 @@ exports.createGroup = [
                 data: {
                     groupId: id,
                     userId: req.user.id,
-                    name: groupName
                 }
             })
 
@@ -72,10 +71,21 @@ exports.getGroup = async(req, res, next) => {
         const joinedGroups = await prisma.userGroup.findMany({
             where: {
                 userId: req.user.id
+            },
+            select: {
+                group: {
+                    select: {
+                        name: true,
+                        id: true
+                    }
+                }
             }
         })
 
-        const filteredJoinedGroups = joinedGroups.filter(group => !joinedGroupIdsSet.has(group.groupId)) 
+
+        const filteredJoinedGroups = joinedGroups.filter(group => !joinedGroupIdsSet.has(group.group.id)) 
+        
+        console.log(filteredJoinedGroups)
         return res.status(200).json({
             userGroups: userGroups,
             joinedGroups: filteredJoinedGroups
@@ -121,7 +131,7 @@ exports.getGroupMessages = async(req, res, next) => {
             If not return 401
         */
         const { groupId } = req.params
-
+        
         const messages = await prisma.message.findMany({
             where:{
                 groupId: parseInt(groupId)
@@ -141,5 +151,46 @@ exports.getGroupMessages = async(req, res, next) => {
 
     } catch(error){
         return next(error)
+    }
+}
+
+exports.getGroupMembers = async(req, res, next) => {
+    try{
+        const groupId = parseInt(req.params.groupId)
+        const groupMembers = await prisma.userGroup.findMany({
+            where: {
+              groupId: groupId,
+            },
+            select: {
+              user: {
+                select: {
+                  id: true,
+                  username: true,
+                },
+              },
+            },
+          });
+
+          const filteredMembers = groupMembers.filter(user => user.user.id !== req.user.id)
+
+          return res.json({
+            groupMembers: filteredMembers
+          })
+    } catch(error){
+        next(error)
+    }
+}
+
+exports.addGroupMember = async(req, res, next) => {
+    try{
+        //GET THE CREATOR ID OF THE GROUP AND COMPARE TO GROUP ID
+        const userId = parseInt(req.params.userId)
+        const groupId = parseInt(req.params.groupId)
+
+        await prisma.userGroup.create({
+
+        })
+    } catch(error){
+        next(error)
     }
 }

@@ -72,7 +72,7 @@ res.clearCookie("refresh", {
 app.use((err, req, res, next) => {
   console.error(`Error ${err.status || 500 }: ${err.message || 'Internal Server Error'}`)
   res.status(err.status || 500).json({
-    errors: err.json || ['Internal Server Error'],
+    errors: err.json || [{msg: 'Internal Server Error'}],
 
   });
 });

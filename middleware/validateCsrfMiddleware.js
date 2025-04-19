@@ -44,9 +44,9 @@ const XFRS_SECRET = process.env.XFRS_SECRET
     if(!(originalToken === header)){
         // console.log("TOKEN", token)
         // console.log()
-        console.log("DECODED", originalToken)
-        console.log()
-        console.log("HEADER", header)
+        // console.log("DECODED", originalToken)
+        // console.log()
+        // console.log("HEADER", header)
     }
     return originalToken === header
   }

@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "./node_modules/@prisma/client"
+  output   = "../node_modules/@prisma/client"
 }
 
 datasource db {
@@ -58,7 +58,6 @@ model Group {
 model UserGroup {
   userId    Int
   groupId   Int
-  name String
   user      User  @relation("UserGroupsUser", fields: [userId], references: [id])
   group     Group @relation("UserGroupsGroup", fields: [groupId], references: [id])
 
