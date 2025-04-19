@@ -84,8 +84,6 @@ exports.getGroup = async(req, res, next) => {
 
 
         const filteredJoinedGroups = joinedGroups.filter(group => !joinedGroupIdsSet.has(group.group.id)) 
-        
-        console.log(filteredJoinedGroups)
         return res.status(200).json({
             userGroups: userGroups,
             joinedGroups: filteredJoinedGroups
@@ -187,9 +185,29 @@ exports.addGroupMember = async(req, res, next) => {
         const userId = parseInt(req.params.userId)
         const groupId = parseInt(req.params.groupId)
 
-        await prisma.userGroup.create({
 
+        const creatorId = await prisma.group.findUnique({
+            where: {
+                id: groupId
+            },
+            select: {
+                creatorId: true
+            }
         })
+
+        if(req.user.id !== creatorId.creatorId){
+            throwError("Unauthorized", 401, [{msg: "Unauthroized"}])
+        }
+
+        console.log("Creator Id:", creatorId)
+        await prisma.userGroup.create({
+            data: {
+                userId: userId,
+                groupId: groupId
+            }
+        })
+
+        return res.json("Group Created")
     } catch(error){
         next(error)
     }

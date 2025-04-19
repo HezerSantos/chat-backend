@@ -277,7 +277,8 @@ exports.getFriends = async(req, res, next) => {
                     include: {
                         friend: {
                             select: {
-                                username: true
+                                username: true,
+                                userGroups: true,
                             }
                         }
                     }

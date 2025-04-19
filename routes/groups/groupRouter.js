@@ -1,5 +1,5 @@
 const { Router } = require('express')
-const { createGroup, getGroup, createMessage, getGroupMessages, getGroupMembers } = require('../../controllers/groups/groupController')
+const { createGroup, getGroup, createMessage, getGroupMessages, getGroupMembers, addGroupMember } = require('../../controllers/groups/groupController')
 const { passport } = require('../../config/passport')
 const { validate } = require('../../controllers/auth/validateFingerprint')
 const groupRouter = Router()
@@ -11,6 +11,6 @@ groupRouter.post("/:groupId/messages", passport.authenticate("jwt", {session: fa
 groupRouter.get("/:groupId/messages", passport.authenticate("jwt", {session: false}), validate, getGroupMessages)
 
 groupRouter.get("/:groupId/users", passport.authenticate("jwt", {session: false}), validate, getGroupMembers)
-groupRouter.post("/:groupId/users/:userId", passport.authenticate("jwt", {session: false}), validate)
+groupRouter.post("/:groupId/users/:userId", passport.authenticate("jwt", {session: false}), validate, addGroupMember)
 
 module.exports = groupRouter
