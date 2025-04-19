@@ -2,7 +2,8 @@ const { validateGroup } = require("../../validation/groupValidator");
 const prisma = require("../../config/prisma");
 const { validationResult } = require("express-validator");
 const { validateMessage } = require("../../validation/messageValidator");
-
+const { validateUpdateGroup } = require("../../validation/updateGroupValidator");
+const argon = require('argon2');
 
 const throwError = (message, status, json) => {
     const error = new Error(message)
@@ -52,6 +53,102 @@ exports.createGroup = [
 
         } catch(error){
             return next(error)
+        }
+    }
+]
+
+exports.deleteGroup = async(req, res, next) => {
+    try{
+        const groupId = parseInt(req.params.groupId)
+
+        const group = await prisma.group.findUnique({
+            where: {
+                id: groupId
+            },
+            select: {
+                creatorId: true
+            }
+        })
+
+        if (req.user.id !== group.creatorId){
+            throwError("Unauthorized", 401, [{msg: "Unauthorized"}])
+        }
+
+        const user = await prisma.user.findUnique({
+            where: {
+                id: req.user.id
+            },
+            select: {
+                password: true
+            }
+        })
+
+        const { password } = req.body
+
+        const match = await argon.verify(user.password, password)
+        
+        if(!match){
+            throwError("Credential Error", 401, [{msg: "Unauthorized"}])
+        }
+
+        await prisma.message.deleteMany({
+            where: {
+                groupId: groupId
+            }
+        })
+
+        await prisma.userGroup.deleteMany({
+            where: {
+                groupId: groupId
+            }
+        })
+
+        await prisma.group.delete({
+            where: {
+                id: groupId
+            }
+        })
+        return res.json("Group Deleted")
+    } catch(error){
+        next(error)
+    }
+}
+
+exports.updateGroup = [
+    validateUpdateGroup,
+    async(req, res, next) => {
+        try{
+            const errors = validationResult(req)
+            if(!errors.isEmpty()){
+                throwError("Invalid Group Name", 400, errors.array())
+            }
+
+            const groupId = parseInt(req.params.groupId)
+
+            const group = await prisma.group.findUnique({
+                where: {
+                    id: groupId
+                },
+                select: {
+                    creatorId: true
+                }
+            })
+
+            if(req.user.id !== group.creatorId){
+                throwError("Unauthorized", 401, [{msg: "Unathroized"}])
+            }
+            const { newName } = req.body
+            await prisma.group.update({
+                where: {
+                    id: groupId
+                },
+                data: {
+                    name: newName
+                }
+            })
+            return res.json("Update Name")
+        } catch(error){
+            next(error)
         }
     }
 ]
