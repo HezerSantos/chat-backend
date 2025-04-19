@@ -199,11 +199,46 @@ exports.addGroupMember = async(req, res, next) => {
             throwError("Unauthorized", 401, [{msg: "Unauthroized"}])
         }
 
-        console.log("Creator Id:", creatorId)
         await prisma.userGroup.create({
             data: {
                 userId: userId,
                 groupId: groupId
+            }
+        })
+
+        return res.json("Group Created")
+    } catch(error){
+        next(error)
+    }
+}
+
+
+exports.deleteGroupMember = async(req, res, next) => {
+    try{
+        //GET THE CREATOR ID OF THE GROUP AND COMPARE TO GROUP ID
+        const userId = parseInt(req.params.userId)
+        const groupId = parseInt(req.params.groupId)
+
+
+        const creatorId = await prisma.group.findUnique({
+            where: {
+                id: groupId
+            },
+            select: {
+                creatorId: true
+            }
+        })
+
+        if(req.user.id !== creatorId.creatorId){
+            throwError("Unauthorized", 401, [{msg: "Unauthroized"}])
+        }
+
+        await prisma.userGroup.delete({
+            where: {
+                userId_groupId: {
+                    userId: userId,
+                    groupId: groupId
+            }   
             }
         })
 
