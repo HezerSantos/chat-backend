@@ -42,6 +42,7 @@ const loginRouter = require("./routes/auth/loginRouter");
 const userRouter = require("./routes/users/userRouter");
 const refreshRouter = require("./routes/auth/refreshRouter");
 const groupRouter = require("./routes/groups/groupRouter");
+const prisma = require("./config/prisma");
 
 
 // Routes
@@ -90,6 +91,7 @@ const wss = new WebSocket.Server({
 
 
 const connectedClients = new Map()
+const connectedGroups = new Map()
 
 const getCookie = (tokenName, cookie) => {
   let cookies = cookie.split(';')
@@ -99,58 +101,96 @@ const getCookie = (tokenName, cookie) => {
   return cookies.get(tokenName)
 }
 
+const getGroupIds = async(socketId) => {
+  try{
+    const groups = await prisma.userGroup.findMany({
+      where: {
+        userId: socketId
+      },
+      select: {
+        groupId: true
+      }
+    })
+
+    const groupIds = new Set(groups.map(group => group.groupId))
+    return groupIds
+  } catch (e){
+    console.error(e)
+  }
+}
+
 JWT_SECRET = process.env.JWT_SECRET
 XFRS_SECRET = process.env.XFRS_SECRET
 
 wss.on('connection', (ws, req) => {
+  const socket = ws
+  let socketId
+  let username
+  let groupId
+
   const access = getCookie("access", req.headers.cookie)
   let _sxrfa = getCookie("_sxrfa", req.headers.cookie)
   try{
     const accessPayload = jwt.verify(access, JWT_SECRET)
     const _sxrfaPayload = jwt.verify(_sxrfa, XFRS_SECRET)
     if(!accessPayload || !_sxrfaPayload){
-
+      throw new Error()
     }
+
+    socketId = accessPayload.id
+    username = accessPayload.username
+    connectedClients.set(socketId, {socket: socket})
   } catch(error){
     ws.close(4000, 'Invalid session cookie')
+    if(socketId){
+      connectedClients.delete(socketId)
+    }
     console.log("Invalid")
   }
 
 
 
-  const socket = ws
-  let socketId
-  let username
-  let groupId
 
-  ws.on('message', (data) => {
+
+  ws.on('message', async(data) => {
     const req = JSON.parse(data)
     if (req.type === 'Connect'){
-      connectedClients.set(req.id, ws)
-      socketId = req.id
-      username = req.username
       groupId = req.groupId
-      payload = req.token
-      // console.log(`${req.username} connected to group: ${req.groupId}`)
+
+      const groupIds = await getGroupIds(socketId)
+      const clientInfo = connectedClients.get(socketId)
+      clientInfo.groupIds = groupIds
+      
+      if(!groupIds.has(groupId)){
+        clientInfo.socket.send(JSON.stringify({
+          userId: null,
+          username: 'Server',
+          message: "You do not have access to this socket",
+          groupId: groupId,
+        }))
+        socket.close(4000, "Unauthorized")
+        connectedClients.delete(socketId)
+        return
+      }
+
+      connectedGroups.set(socketId, {socket: socket, groupId: groupId})
+      
       return
     }
     
-    connectedClients.forEach((client, id) => {
-      client.send(JSON.stringify({
-        userId: req.id,
-        username: req.username,
-        message: req.message,
-        groupId: req.groupId,
-        messageId: req.messageId
-      }))
+    connectedGroups.forEach((client, id) => {
+      if(client.groupId === groupId){
+        client.socket.send(JSON.stringify({
+          userId: socketId,
+          username: username,
+          message: req.message,
+        }))
+      }
     })
   })
 
   ws.on('close', () => {
     connectedClients.delete(socketId)
-    if(username && groupId){
-      // console.log(`${username} disconnected from group: ${groupId}`)
-    }
   })
 })
 
