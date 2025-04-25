@@ -26,6 +26,7 @@
     "express": "^4.21.2",
     "express-async-handler": "^1.2.0",
     "express-fingerprint": "^1.0.5",
+    "express-rate-limit": "^7.5.0",
     "express-session": "^1.18.1",
     "express-validator": "^7.2.1",
     "file-type": "^20.4.1",

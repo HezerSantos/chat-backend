@@ -53,12 +53,12 @@ async function authenticateUser(username, password, req) {
     });
 
     if (!user) {
-      throwError("Login Error", 401, ["Incorrect Username or Password"])
+      throwError("Login Error", 401, [{msg: "Incorrect Username or Password"}])
     }
 
     const match = await argon.verify(user.password, password);
     if (!match) {
-      throwError("Login Error", 401, ["Incorrect Username or Password"])
+      throwError("Login Error", 401, [{msg: "Incorrect Username or Password"}])
     }
 
     // Create JWT payload

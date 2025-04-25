@@ -8,7 +8,7 @@ const http = require('http')
 const WebSocket = require('ws')
 
 const app = express();
-
+app.set('trust proxy', true);
 
 
 
