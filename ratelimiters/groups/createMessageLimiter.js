@@ -9,7 +9,7 @@ const throwError = (message, status, json) => {
 
 exports.createMessageLimiter = rateLimit({
     windowMs: 1 * 60 * 1000, 
-    max: 25, // Limit each IP to 100 requests per windowMs
+    max: 20, // Limit each IP to 100 requests per windowMs
     message: 'Too many requests, please try again later.',
     headers: true, // Add rate limit info to response headers
     handler: (req, res, next) => {

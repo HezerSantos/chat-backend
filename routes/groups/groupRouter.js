@@ -10,18 +10,19 @@ const { createMessageLimiter } = require('../../ratelimiters/groups/createMessag
 const { getGroupMessagesLimiter } = require('../../ratelimiters/groups/getGroupMessagesLimiter')
 const { getGroupMembersLimiter } = require('../../ratelimiters/groups/getGroupMembersLimiter')
 const { addGroupMembersLimiter } = require('../../ratelimiters/groups/addGroupMemberLimiter')
+const { deleteGroupMemberLimiter } = require('../../ratelimiters/groups/deleteGroupMemberLimiter')
 const groupRouter = Router()
 
 groupRouter.post("/", createGroupLimiter, passport.authenticate("jwt", {session: false}), validate, createGroup)
 groupRouter.put("/:groupId", updateGroupLimiter, passport.authenticate("jwt", {session: false}), validate, updateGroup)
 groupRouter.delete("/:groupId", deleteGroupLimiter, passport.authenticate("jwt", {session: false}), validate, deleteGroup)
-groupRouter.get("/", getGroupLimiter, passport.authenticate("jwt", {session: false}), validate, getGroup)
+groupRouter.get("/", passport.authenticate("jwt", {session: false}), validate, getGroup)
 
 groupRouter.post("/:groupId/messages", createMessageLimiter, passport.authenticate("jwt", {session: false}), validate, createMessage)
-groupRouter.get("/:groupId/messages", getGroupMessagesLimiter, passport.authenticate("jwt", {session: false}), validate, getGroupMessages)
+groupRouter.get("/:groupId/messages", passport.authenticate("jwt", {session: false}), validate, getGroupMessages)
 
-groupRouter.get("/:groupId/users", getGroupMembersLimiter, passport.authenticate("jwt", {session: false}), validate, getGroupMembers)
+groupRouter.get("/:groupId/users", passport.authenticate("jwt", {session: false}), validate, getGroupMembers)
 groupRouter.post("/:groupId/users/:userId", addGroupMembersLimiter, passport.authenticate("jwt", {session: false}), validate, addGroupMember)
-groupRouter.delete("/:groupId/users/:userId", deleteGroupLimiter, passport.authenticate("jwt", {session: false}), validate, deleteGroupMember)
+groupRouter.delete("/:groupId/users/:userId", deleteGroupMemberLimiter, passport.authenticate("jwt", {session: false}), validate, deleteGroupMember)
 
 module.exports = groupRouter

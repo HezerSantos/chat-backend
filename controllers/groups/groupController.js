@@ -135,7 +135,7 @@ exports.updateGroup = [
             })
 
             if(req.user.id !== group.creatorId){
-                throwError("Unauthorized", 401, [{msg: "Unathroized"}])
+                throwError("Unauthorized", 401, [{msg: "Unauthorized"}])
             }
             const { newName } = req.body
             await prisma.group.update({
@@ -202,6 +202,24 @@ exports.createMessage = [
             const { message } = req.body
             const { groupId } = req.params
 
+            const user = await prisma.user.findUnique({
+                where: {
+                    id: req.user.id
+                },
+                select: {
+                    userGroups: {
+                        select: {
+                            groupId: true
+                        }
+                    }
+                }
+            })
+
+            const groupIds = new Set(user.userGroups.map(group => group.groupId))
+            
+            if(!groupIds.has(parseInt(groupId))){
+                throwError("Unauthorized", 401, [{msg: "Unauthorized"}])
+            }
             await prisma.message.create({
                 data: {
                     message: message,
@@ -226,6 +244,26 @@ exports.getGroupMessages = async(req, res, next) => {
             If not return 401
         */
         const { groupId } = req.params
+
+        
+        const user = await prisma.user.findUnique({
+            where: {
+                id: req.user.id
+            },
+            select: {
+                userGroups: {
+                    select: {
+                        groupId: true
+                    }
+                }
+            }
+        })
+
+        const groupIds = new Set(user.userGroups.map(group => group.groupId))
+
+        if(!groupIds.has(parseInt(groupId))){
+            throwError("Unauthorized", 401, [{msg: "Unauthorized"}])
+        }
         
         const messages = await prisma.message.findMany({
             where:{
@@ -252,6 +290,28 @@ exports.getGroupMessages = async(req, res, next) => {
 exports.getGroupMembers = async(req, res, next) => {
     try{
         const groupId = parseInt(req.params.groupId)
+
+                
+        const user = await prisma.user.findUnique({
+            where: {
+                id: req.user.id
+            },
+            select: {
+                userGroups: {
+                    select: {
+                        groupId: true
+                    }
+                }
+            }
+        })
+
+        const groupIds = new Set(user.userGroups.map(group => group.groupId))
+
+        if(!groupIds.has(groupId)){
+            throwError("Unauthorized", 401, [{msg: "Unauthorized"}])
+        }
+
+
         const groupMembers = await prisma.userGroup.findMany({
             where: {
               groupId: groupId,
