@@ -3,7 +3,7 @@ const cors = require("cors");
 const allowedOrigins = [
   "http://localhost:5173", 
   "http://127.0.0.1:5173", 
-  
+  "https://chat-frontend-production-c485.up.railway.app"
 ];
 
 const corsOptions = {
