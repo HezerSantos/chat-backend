@@ -7,8 +7,8 @@ const throwError = (message, status, json) => {
 }
 
 
-exports.deletePendingLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, 
+exports.getGroupMessagesLimiter = rateLimit({
+    windowMs: 5 * 60 * 1000, 
     max: 10, // Limit each IP to 100 requests per windowMs
     message: 'Too many requests, please try again later.',
     headers: true, // Add rate limit info to response headers
@@ -18,6 +18,6 @@ exports.deletePendingLimiter = rateLimit({
     },
     keyGenerator: (req) => {
       // Use forwarded IP if available, fallback to direct IP
-      return req.ip || req.connection.remoteAddress;
+      return req.headers['x-forwarded-for']?.split(',')[0].trim() || req.ip
     }
   });
