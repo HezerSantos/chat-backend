@@ -47,6 +47,7 @@ exports.loginUser = [
                 maxAge: 15 * 60 * 1000, 
                 sameSite: "Strict",
                 path: "/",
+                domain: "lunarlink.hallowedvisions.com"
             });
             res.cookie("refresh", refresh, {
                 httpOnly: true,      
@@ -54,7 +55,7 @@ exports.loginUser = [
                 maxAge: 7 * 24 * 60 * 60 * 1000, 
                 sameSite: "Strict", 
                 path: "/",
-                domain: ".hallowedvisions.com"
+                domain: "lunarlink.hallowedvisions.com"
             });
 
             return res.json({user})

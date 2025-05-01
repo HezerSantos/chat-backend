@@ -32,6 +32,7 @@ exports.getRefresh = async(req, res, next) => {
             maxAge: 15 * 60 * 1000, 
             sameSite: "None",
             path: "/",
+            domain: "lunarlink.hallowedvisions.com"
         });
 
         // console.log("User Refreshed")
