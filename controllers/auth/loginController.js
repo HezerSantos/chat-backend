@@ -54,6 +54,7 @@ exports.loginUser = [
                 maxAge: 7 * 24 * 60 * 60 * 1000, 
                 sameSite: "Strict", 
                 path: "/",
+                domain: ".hallowedvisions.com"
             });
 
             return res.json({user})

@@ -27,6 +27,7 @@ const csrf = async(req, res, next) => {
         maxAge: 5 * 1000 * 60, 
         sameSite: "None",
         path: "/",
+        domain: ".hallowedvisions.com"
     })
 
     res.cookie("asiw_", asiw_, {
@@ -35,6 +36,7 @@ const csrf = async(req, res, next) => {
         maxAge: 5 * 1000 * 60, 
         sameSite: "None",
         path: "/",
+        domain: ".hallowedvisions.com"
     })
 
     res.status(200).send()

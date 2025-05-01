@@ -46,6 +46,7 @@ exports.validateRefreshCsrf = (req, res, next) => {
             maxAge: 60 * 1000 * 5, 
             sameSite: "None",
             path: "/",
+            domain: ".hallowedvisions.com"
         })
         console.log("Validated", req.method, req.originalUrl)
         next()
